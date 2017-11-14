@@ -1,0 +1,21 @@
+language: go
+go:
+    - 1.9
+
+services:
+  - docker
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
+after_success:
+  - docker version
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - export REPO=kapekto1/probe
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -t kapekto1/probe .
+  - docker tag kapekto1/probe $REPO:0.1
+  - docker tag kapekto1/probe $REPO:$TAG
+  - docker tag kapekto1/probe $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
