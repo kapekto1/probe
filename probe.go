@@ -7,34 +7,34 @@ import (
 	"os"
 )
 
+
 type Message struct {
-	message string
 	hostname string
 	time string
 	client_ip string
+	process_time time.Duration
+	node_name string
 }
 
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
+func get_env_variables() string {
+	return os.Getenv("MY_NODE_NAME")
 
+}
 
 func handler1(w http.ResponseWriter, r *http.Request) {
-	m1 := new(Message)
 	start := time.Now()
+	m1 := new(Message)
 	m1.time = start.Format(time.Stamp)
 	m1.hostname, _ = os.Hostname()
 	m1.client_ip = r.RemoteAddr
-	fmt.Fprintf(w, "%s... You've hit %s from %s \n", m1.time, m1.hostname, m1.client_ip)
-	fmt.Println(time.Since(start))
+	m1.node_name = get_env_variables()
+	m1.process_time = time.Since(start)
+	fmt.Fprintf(w, "> %s\n  you've hit %s\n  your ip: %s\n  processing time: %s\n", m1.time, m1.hostname, m1.client_ip, m1.process_time)
+	fmt.Println(get_env_variables())
 }
 
 func main() {
-	var err error
-	check(err)
 	http.HandleFunc("/", handler1)
-	http.ListenAndServe("0.0.0.0:8080", nil)
+	http.ListenAndServe("127.0.0.1:8080", nil)
 }
 
