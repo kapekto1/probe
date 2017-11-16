@@ -29,7 +29,8 @@ func handler1(w http.ResponseWriter, r *http.Request) {
 	m1.client_ip = r.RemoteAddr
 	m1.node_name = get_env_variables()
 	m1.process_time = time.Since(start)
-	fmt.Fprintf(w, "> %s\n  you've hit %s\n  your ip: %s\n  processing time: %s\n", m1.time, m1.hostname, m1.client_ip, m1.process_time)
+	m1.node_name = get_env_variables()
+	fmt.Fprintf(w, "> %s\n  you've hit %s\n  your ip: %s\n  processing time: %s\n  node name: %s\n", m1.time, m1.hostname, m1.client_ip, m1.process_time, m1.node_name)
 	fmt.Println(get_env_variables())
 }
 
